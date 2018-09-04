@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
-         xmlns:mgnl="http://www.magnolia.info/jcr/mgnl"
-         sv:name="vanityUrl">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" sv:name="vanityUrl">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>mgnl:contentNode</sv:value>
   </sv:property>
@@ -828,6 +826,23 @@
                   <sv:value>true</sv:value>
                 </sv:property>
               </sv:node>
+              <sv:node sv:name="locale">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>mgnl:contentNode</sv:value>
+                </sv:property>
+                <sv:property sv:name="class" sv:type="String">
+                  <sv:value>info.magnolia.ui.workbench.column.definition.PropertyColumnDefinition</sv:value>
+                </sv:property>
+                <sv:property sv:name="expandRatio" sv:type="Double">
+                  <sv:value>1.0</sv:value>
+                </sv:property>
+                <sv:property sv:name="propertyName" sv:type="String">
+                  <sv:value>locale</sv:value>
+                </sv:property>
+                <sv:property sv:name="sortable" sv:type="String">
+                  <sv:value>true</sv:value>
+                </sv:property>
+              </sv:node>
               <sv:node sv:name="link">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>mgnl:contentNode</sv:value>
@@ -1063,15 +1078,20 @@
                     <sv:value>mgnl:contentNode</sv:value>
                   </sv:property>
                   <sv:property sv:name="class" sv:type="String">
-                    <sv:value>com.aperto.magnolia.vanity.app.SiteSelectFieldDefinition</sv:value>
-                  </sv:property>
-                  <sv:property sv:name="defaultValue" sv:type="String">
-                    <sv:value>default</sv:value>
+                    <sv:value>info.magnolia.ui.form.field.definition.TextFieldDefinition</sv:value>
                   </sv:property>
                   <sv:property sv:name="required" sv:type="Boolean">
                     <sv:value>true</sv:value>
                   </sv:property>
-                  <sv:property sv:name="sortOptions" sv:type="Boolean">
+                </sv:node>
+                <sv:node sv:name="locale">
+                  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>mgnl:contentNode</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="class" sv:type="String">
+                    <sv:value>info.magnolia.ui.form.field.definition.TextFieldDefinition</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="required" sv:type="Boolean">
                     <sv:value>false</sv:value>
                   </sv:property>
                 </sv:node>
@@ -1221,3 +1241,4 @@
     </sv:node>
   </sv:node>
 </sv:node>
+

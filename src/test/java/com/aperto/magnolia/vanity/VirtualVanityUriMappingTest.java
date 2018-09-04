@@ -96,10 +96,10 @@ public class VirtualVanityUriMappingTest {
 
         Provider serviceProvider = mock(Provider.class);
         VanityUrlService vanityUrlService = mock(VanityUrlService.class);
-        when(vanityUrlService.queryForVanityUrlNode("/home", "default")).thenReturn(null);
+        when(vanityUrlService.queryForVanityUrlNode("/home", "default", null)).thenReturn(null);
 
         MockNode mockNode = new MockNode("xmas");
-        when(vanityUrlService.queryForVanityUrlNode("/xmas", "default")).thenReturn(mockNode);
+        when(vanityUrlService.queryForVanityUrlNode("/xmas", "default", null)).thenReturn(mockNode);
 
         when(vanityUrlService.createRedirectUrl(mockNode)).thenReturn("redirect:/internal/page.html");
         when(serviceProvider.get()).thenReturn(vanityUrlService);

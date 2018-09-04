@@ -34,7 +34,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.PatternSyntaxException;
@@ -108,12 +111,13 @@ public class VirtualVanityUriMapping implements VirtualUriMapping {
 
     protected String getUriOfVanityUrl(final String vanityUrl) {
         final String siteName = retrieveSite();
+        final String locale = retrieveLocale();
         Node node = null;
 
         try {
             // do it in system context, so the anonymous need no read rights for using vanity urls
             node = MgnlContext.doInSystemContext(
-                (MgnlContext.Op<Node, RepositoryException>) () -> _vanityUrlService.get().queryForVanityUrlNode(vanityUrl, siteName)
+                (MgnlContext.Op<Node, RepositoryException>) () -> _vanityUrlService.get().queryForVanityUrlNode(vanityUrl, siteName, locale)
             );
         } catch (RepositoryException e) {
             LOGGER.warn("Error on querying for vanity url.", e);
@@ -122,7 +126,11 @@ public class VirtualVanityUriMapping implements VirtualUriMapping {
         return node == null ? EMPTY : createUrlForVanityNode(node);
     }
 
-    /**
+    protected String retrieveLocale() {
+		return MgnlContext.getLocale().toString();
+	}
+
+	/**
      * Override for alternative redirect url creation.
      *
      * @param node vanity url node
@@ -132,12 +140,21 @@ public class VirtualVanityUriMapping implements VirtualUriMapping {
         return _vanityUrlService.get().createRedirectUrl(node);
     }
 
+
     private String retrieveSite() {
         String siteName = DEF_SITE;
 
         if (_moduleRegistry.get().isModuleRegistered("multisite")) {
             Site site = ((ExtendedAggregationState) MgnlContext.getAggregationState()).getSite();
             siteName = site.getName();
+        }
+        else { // otherwise use the domain...
+        	String requestURL = MgnlContext.getWebContext().getRequest().getRequestURL().toString();
+        	try {
+				siteName = new URL(requestURL).getHost();
+			} catch (MalformedURLException e) {
+				LOGGER.warn("Error on getting request domain.", e);
+			}
         }
 
         return siteName;

@@ -70,7 +70,9 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 public class VanityUrlService {
     private static final Logger LOGGER = LoggerFactory.getLogger(VanityUrlService.class);
 
-    private static final String QUERY = "select * from [mgnl:vanityUrl] where vanityUrl = $vanityUrl and site = $site";
+    private static final String QUERY = "select * from [mgnl:vanityUrl] where vanityUrl = $vanityUrl and site = $site and (locale is null or locale = $locale)";
+    private static final String EXACT_QUERY = "select * from [mgnl:vanityUrl] where vanityUrl = $vanityUrl and site = $site and locale = $locale";
+    private static final String EXACT_NULL_QUERY = "select * from [mgnl:vanityUrl] where vanityUrl = $vanityUrl and site = $site and locale IS NULL";
     public static final String NN_IMAGE = "qrCode";
     public static final String DEF_SITE = "default";
     public static final String PN_SITE = "site";
@@ -78,6 +80,7 @@ public class VanityUrlService {
     public static final String PN_LINK = "link";
     public static final String PN_SUFFIX = "linkSuffix";
     public static final String PN_TYPE = "type";
+    public static final String PN_LOCALE = "locale";
 
     @Inject
     @Named(value = "magnolia.contextpath")
@@ -203,10 +206,10 @@ public class VanityUrlService {
      * @param siteName  site name from aggegation state
      * @return first vanity url node of result or null, if nothing found
      */
-    public Node queryForVanityUrlNode(final String vanityUrl, final String siteName) {
+    public Node queryForVanityUrlNode(final String vanityUrl, final String siteName, String locale) {
         Node node = null;
 
-        List<Node> nodes = queryForVanityUrlNodes(vanityUrl, siteName);
+        List<Node> nodes = queryForVanityUrlNodes(vanityUrl, siteName, locale, false);
         if (!nodes.isEmpty()) {
             node = nodes.get(0);
         }
@@ -221,15 +224,22 @@ public class VanityUrlService {
      * @param siteName  site name from aggegation state
      * @return vanity url nodes or empty list, if nothing found
      */
-    public List<Node> queryForVanityUrlNodes(final String vanityUrl, final String siteName) {
+    public List<Node> queryForVanityUrlNodes(final String vanityUrl, final String siteName, String locale, boolean exact) {
         List<Node> nodes = Collections.emptyList();
 
         try {
             Session jcrSession = MgnlContext.getJCRSession(VanityUrlModule.WORKSPACE);
             QueryManager queryManager = jcrSession.getWorkspace().getQueryManager();
-            Query query = queryManager.createQuery(QUERY, JCR_SQL2);
+            String queryStr;
+            if (exact)
+            	queryStr = (locale!=null)?EXACT_QUERY:EXACT_NULL_QUERY;
+        	else
+        		queryStr = QUERY;            
+            Query query = queryManager.createQuery(queryStr, JCR_SQL2);
             query.bindValue(PN_VANITY_URL, new StringValue(vanityUrl));
             query.bindValue(PN_SITE, new StringValue(siteName));
+            if (!(exact && locale==null))
+            	query.bindValue(PN_LOCALE, new StringValue(locale));
             QueryResult queryResult = query.execute();
             nodes = asList(asIterable(queryResult.getNodes()));
         } catch (RepositoryException e) {

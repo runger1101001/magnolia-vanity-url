@@ -33,6 +33,7 @@ import javax.jcr.Node;
 import java.util.List;
 
 import static com.aperto.magnolia.vanity.VanityUrlService.PN_SITE;
+import static com.aperto.magnolia.vanity.VanityUrlService.PN_LOCALE;
 import static info.magnolia.jcr.util.NodeUtil.getNodeIdentifierIfPossible;
 
 /**
@@ -65,8 +66,12 @@ public class UniqueVanityUrlValidator extends AbstractStringValidator {
     private boolean validateField(final String value, final JcrNodeAdapter jcrNodeAdapter) {
         boolean validField = true;
         Property<?> site = jcrNodeAdapter.getItemProperty(PN_SITE);
+        Property<?> locale = jcrNodeAdapter.getItemProperty(PN_LOCALE);
+        String localeStr = null;
+        if (locale!=null && locale.getValue()!=null)
+        	localeStr = locale.getValue().toString();
         if (site.getValue() != null) {
-            List<Node> nodes = _vanityUrlService.queryForVanityUrlNodes(value, site.getValue().toString());
+            List<Node> nodes = _vanityUrlService.queryForVanityUrlNodes(value, site.getValue().toString(), localeStr, true);
             if (jcrNodeAdapter instanceof JcrNewNodeAdapter) {
                 validField = nodes.isEmpty();
             } else {

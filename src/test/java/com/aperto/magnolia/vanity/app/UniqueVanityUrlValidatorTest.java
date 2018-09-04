@@ -54,15 +54,15 @@ public class UniqueVanityUrlValidatorTest {
     @Before
     public void setUp() throws Exception {
         _vanityUrlService = mock(VanityUrlService.class);
-        when(_vanityUrlService.queryForVanityUrlNodes("/new", "site")).thenReturn(emptyList());
+        when(_vanityUrlService.queryForVanityUrlNodes("/new", "site", null, true)).thenReturn(emptyList());
 
         List<Node> uniqueList = new ArrayList<>();
         Node node = mock(Node.class);
         when(node.getIdentifier()).thenReturn("123");
         uniqueList.add(node);
-        when(_vanityUrlService.queryForVanityUrlNodes("/unique", "site")).thenReturn(uniqueList);
+        when(_vanityUrlService.queryForVanityUrlNodes("/unique", "site", null, true)).thenReturn(uniqueList);
 
-        when(_vanityUrlService.queryForVanityUrlNodes("/lorem", "site")).thenReturn(uniqueList);
+        when(_vanityUrlService.queryForVanityUrlNodes("/lorem", "site", null, true)).thenReturn(uniqueList);
     }
 
     @Test
